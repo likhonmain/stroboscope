@@ -1,0 +1,58 @@
+name: Build Android APK & Publish Release
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build StroboScope Pro APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Gradle 9.3.1
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.3.1'
+
+      - name: Build Debug & Signed Release APKs
+        run: |
+          chmod +x ./ci-build-apk.sh
+          ./ci-build-apk.sh
+
+      - name: Upload APK to Workflow Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: StroboScope-Pro-APK
+          path: dist/*.apk
+          if-no-files-found: error
+
+      - name: Publish APK to GitHub Releases Page
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: "StroboScope Pro v1.0.${{ github.run_number }} (APK Download)"
+          body: |
+            ## StroboScope Pro — Automated Android APK Build
+            Download and install either APK below directly on your Android phone:
+            - **`StroboScope-Pro-debug.apk`** (Recommended for testing & LSPosed / KernelSU)
+            - **`StroboScope-Pro-release.apk`** (Signed release build)
+          files: dist/*.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
