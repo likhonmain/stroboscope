@@ -1,0 +1,6 @@
+{
+  "name": "StroboScope Pro",
+  "description": "High-precision LED stroboscope and optical tachometer with 4-stage granular frequency sliders, sub-hertz control, and Non-Root, KernelSU Root sysfs, and LSPosed driver modes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

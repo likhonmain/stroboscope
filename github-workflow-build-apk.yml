@@ -1,0 +1,103 @@
+name: Build Android APK & Publish Release
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build StroboScope Pro APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK Licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
+      - name: Generate Signing Keystores (Debug & Release)
+        run: |
+          if [ ! -f "debug.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+          if [ ! -f "my-upload-key.jks" ]; then
+            keytool -genkeypair -v \
+              -keystore my-upload-key.jks \
+              -storepass android \
+              -alias upload \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=StroboScope Pro,O=AIStudio,C=US"
+          fi
+
+      - name: Set up Gradle 9.3.1
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.3.1'
+
+      - name: Build Debug & Signed Release APKs
+        env:
+          STORE_PASSWORD: android
+          KEY_PASSWORD: android
+        run: |
+          gradle assembleDebug assembleRelease --no-daemon --stacktrace
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk dist/StroboScope-Pro-debug.apk
+          if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
+            cp app/build/outputs/apk/release/app-release.apk dist/StroboScope-Pro-release.apk
+          fi
+          ls -lh dist/
+
+      - name: Upload APK to Workflow Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: StroboScope-Pro-APK
+          path: dist/*.apk
+          if-no-files-found: error
+
+      - name: Publish APK to GitHub Releases Page
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: "StroboScope Pro v1.0.${{ github.run_number }} (APK Download)"
+          body: |
+            ## StroboScope Pro — Automated Android APK Build
+            Download and install either APK below directly on your Android phone:
+            - **`StroboScope-Pro-debug.apk`** (Recommended for testing & LSPosed / KernelSU)
+            - **`StroboScope-Pro-release.apk`** (Signed release build)
+
+            ### Supported Hardware Modes
+            1. **Non-Root Camera2 API (`STANDARD`)**: Works on all unrooted Android devices.
+            2. **KernelSU / Root Sysfs (`ROOT / KSU`)**: Direct `/sys/class/leds/` control with dedicated **OnePlus 5T (`dumpling` / PMI8998)** Dual-Torch + `led:switch_0` and PMIC Fast-Dimming support (`1–200 Hz`).
+            3. **LSPosed Module (`LSPOSED`)**: Enable in **LSPosed Manager** with scope **System Framework (`android`)** and **SystemUI (`com.android.systemui`)**.
+          files: dist/*.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

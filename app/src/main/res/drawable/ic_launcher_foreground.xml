@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer Tachometer Strobe Segmented Arc -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M54,24 C70.57,24 84,37.43 84,54 C84,61.6 81.1,68.5 76.4,73.8 L72.6,70.4 C76.5,66.0 79,60.3 79,54 C79,40.2 67.8,29 54,29 C40.2,29 29,40.2 29,54 C29,60.3 31.5,66.0 35.4,70.4 L31.6,73.8 C26.9,68.5 24,61.6 24,54 C24,37.43 37.43,24 54,24 Z" />
+    <!-- Precision Tick Marks -->
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M52,19h4v7h-4zM82,52h7v4h-7zM19,52h7v4h-7zM73.5,31.7l4.9,-4.9l2.8,2.8l-4.9,4.9zM31.7,34.5l-4.9,-4.9l2.8,-2.8l4.9,4.9z" />
+    <!-- High-Intensity Strobe Lightning / Beam Core Silhouette -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M57.5,33 L41,55.5 L51.5,55.5 L48.5,77 L68,52.5 L56.5,52.5 Z" />
+    <!-- Inner Cyan Glow Accent -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M54,80 A4,4 0 1,1 54,88 A4,4 0 1,1 54,80 Z" />
+</vector>

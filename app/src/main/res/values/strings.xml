@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StroboScope Pro</string>
+    <string name="xposed_description">High-Frequency LED Stroboscope &amp; Torch Rate-Limit Bypass for OnePlus 5T (dumpling) and Android CameraService</string>
+    <string name="mode_non_root">Non-Root API</string>
+    <string name="mode_root_ksu">Root / KernelSU</string>
+    <string name="mode_lsposed">LSPosed Module</string>
+    <string name="strobe_active">STROBE ACTIVE</string>
+    <string name="strobe_standby">STANDBY</string>
+    <string name="harmonic_half">0.5×</string>
+    <string name="harmonic_normal">1.0×</string>
+    <string name="harmonic_double">2.0×</string>
+    <string name="slider_coarse_label">COARSE</string>
+    <string name="slider_medium_label">±25 Hz</string>
+    <string name="slider_fine_label">±5 Hz</string>
+    <string name="slider_decimal_label">SUB-Hz</string>
+</resources>
